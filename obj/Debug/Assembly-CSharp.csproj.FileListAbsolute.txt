@@ -1,0 +1,2 @@
+D:\Unity项目\Random Map\obj\Debug\Assembly-CSharp.csprojAssemblyReference.cache
+D:\Unity项目\Random Map\obj\Debug\Assembly-CSharp.csproj.CoreCompileInputs.cache
