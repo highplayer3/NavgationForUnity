@@ -98,21 +98,22 @@ namespace CPPSTL
         //这个方法专门用来解决用堆来优化A*算法的更新点时
         public void UpdateHeap(T v)
         {
-            //A*算法中要更新点，G值一定变小。
             int index=0;
             for(int i = 0; i < Count; i++)
             {
-                if (comparer1.Compare(heap[i], v) == 0&&comparer2.Compare(heap[i],v)==0)//相等
+                //通过自定义的比较器来验证相等，也可以直接heap[i].x==v.x&&heap[i].y==v.y来写
+                if (comparer1.Compare(heap[i], v) == 0&&comparer2.Compare(heap[i],v)==0)
                 {
                     index = i;
                     break;
                 }
             }
-            heapInsert(index);
+            heapInsert(index);//更新后F值一定变小，所以要向上冒
         }
         void heapInsert(int n)
         {
-            var v = heap[n];
+            var v = heap[n];//保存当前的值
+            //向上冒
             for (var n2 = n/ 2; n > 0 && comparer.Compare(v, heap[n2]) > 0; n = n2, n2 =n/2) heap[n] = heap[n2];
             heap[n] = v;
             
@@ -121,6 +122,7 @@ namespace CPPSTL
         void heapify(int n)
         {
             var v = heap[n];
+            //向下冒，注意左右孩子还得比较
             for (var n2 = n * 2; n2 < Count; n = n2, n2 *= 2)
             {
                 if (n2 + 1 < Count && comparer.Compare(heap[n2 + 1], heap[n2]) > 0) n2++;//左右孩子之间的比较

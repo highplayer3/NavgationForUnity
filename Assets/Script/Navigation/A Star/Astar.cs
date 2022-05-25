@@ -157,7 +157,7 @@ public class Astar
         List<Point> surPoint = new List<Point>();
         for(int i = -1; i <= 1; i++)
         {
-            for(int j = -1; j <= 1; j++)
+            for(int j = -1; j <= 1; j++)//
             {
                 if (i == 0 && j == 0) continue;//跳过本身
                 if (curPoint.x + i < 0 || curPoint.x + i > Size - 1 || curPoint.y + j < 0 || curPoint.y + j > Size - 1 || map[curPoint.x+i,curPoint.y+j]==1 || isInList(closeList, new Point(curPoint.x + i, curPoint.y + j)) !=null )                 //|| isInList(closeList,new Point(curPoint.x+i,curPoint.y+j))!=null)

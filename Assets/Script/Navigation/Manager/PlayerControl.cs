@@ -25,6 +25,12 @@ public class PlayerControl : MonoBehaviour
     [Header("双向BFS")]
     private BinaryBFS bBFS = new BinaryBFS();
     private List<PointNormal> pathDBFS = new List<PointNormal>();
+    [Header("IDA*")]
+    private IDAstar ida = new IDAstar();
+    private List<PointNormal> pathIDA = new List<PointNormal>();
+    [Header("JPS")]
+    private JPS jps = new JPS();
+    private List<Point> pathJPS = new List<Point>();
     //委托来实现动态函数调用
     private bool flag = false;
     private delegate void NavDelegate();
@@ -38,6 +44,8 @@ public class PlayerControl : MonoBehaviour
         bFS.initMap(MapController.instance.mp);
         dij.InitMap(MapController.instance.mp);
         bBFS.initMap(MapController.instance.mp);
+        ida.initMap(MapController.instance.mp);
+        jps.initMap(MapController.instance.mp);
         //for(int i = 0; i < MapController.instance.mapSize; i++)
         //{
         //    for(int j = 0; j < MapController.instance.mapSize; j++)
@@ -51,8 +59,10 @@ public class PlayerControl : MonoBehaviour
 
     private void Update()
     {
-        NavManager();
+        //NavigationforIDA();
+        //NavManager();
         //NavigationforDBFS();
+        JPStest();
     }
 
     private void NavManager()
@@ -113,6 +123,29 @@ public class PlayerControl : MonoBehaviour
             yield return null;
         }
     }//TODO:移动有问题，不流畅 resolve:yield return new WaitForSeconds换为null,但不知道原因
+
+    private void JPStest()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            flag = false;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit))
+            {
+                if (hit.collider.gameObject.CompareTag("Plane"))
+                {
+                    jps.Destination = new Point((int)Mathf.Round(hit.point.x), (int)Mathf.Round(hit.point.z));
+                    begin = new Point((int)Mathf.Round(Player.transform.position.x), (int)Mathf.Round(Player.transform.position.z));
+                    pathJPS.Clear();
+                    jps.GizmosListForline.Clear();
+                    Debug.Log(jps.Destination.x+" "+jps.Destination.y);
+                    pathJPS = jps.GetPath(begin);
+                }
+            }
+        }
+
+    }
 
     private void Navigation()
     {
@@ -227,6 +260,26 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
+    private void NavigationforIDA()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            //flag = false;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit))
+            {
+                if (hit.collider.gameObject.CompareTag("Plane"))
+                {
+                    destinationDFS = new PointNormal((int)Mathf.Round(hit.point.x), (int)Mathf.Round(hit.point.z));
+                    PointNormal beginDFS = new PointNormal((int)Mathf.Round(Player.transform.position.x), (int)Mathf.Round(Player.transform.position.z));
+                    pathIDA.Clear();
+                    pathIDA = ida.GetPath(beginDFS, destinationDFS);
+                }
+            }
+        }
+    }
+
     private void OnDrawGizmos()
     {
         if (Player != null)
@@ -326,6 +379,44 @@ public class PlayerControl : MonoBehaviour
             foreach(var p in pathDBFS)
             {
                 Gizmos.DrawCube(new Vector3(p.x, 0.01f, p.y), new Vector3(0.9f, 0f, 0.9f));
+            }
+        }
+
+        if (ida.GizmosIDAstack != null && ida.GizmosIDAstack.Count > 0)
+        {
+            Gizmos.color = Color.blue;
+            foreach (var p in ida.GizmosIDAstack)
+            {
+                Gizmos.DrawCube(new Vector3(p.x, 0.001f, p.y), new Vector3(0.9f, 0f, 0.9f));
+            }
+        }
+        if (pathIDA.Count > 0)
+        {
+            Gizmos.color = Color.yellow;
+            foreach(var p in pathIDA)
+            {
+                Gizmos.DrawCube(new Vector3(p.x, 0.01f, p.y), new Vector3(0.9f, 0f, 0.9f));
+                    
+            }
+        }
+
+        if (pathJPS.Count > 0)
+        {
+            Gizmos.color = Color.yellow;
+            foreach (var p in pathJPS)
+            {
+                Gizmos.DrawCube(new Vector3(p.x, 0.01f, p.y), new Vector3(0.9f, 0f, 0.9f));
+            }
+        }
+        if (jps.GizmosListForline!=null&&jps.GizmosListForline.Count > 0)
+        {
+            foreach(var p in jps.GizmosListForline)
+            {
+                if (p.parent != null)
+                {
+                    Gizmos.color = Color.red;
+                    Gizmos.DrawLine(new Vector3(p.x, 0.5f, p.y), new Vector3(p.parent.x, 0.5f, p.parent.y));
+                }
             }
         }
     }//绘制路线

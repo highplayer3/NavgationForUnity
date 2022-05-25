@@ -73,6 +73,8 @@
     <Compile Include="Assets\Script\Navigation\Dijkstra\Dijkstra.cs" />
     <Compile Include="Assets\Script\Navigation\Dijkstra\Priority_Queue\PriorityQueueBase.cs" />
     <Compile Include="Assets\Script\Navigation\Dijkstra\Priority_Queue\Test.cs" />
+    <Compile Include="Assets\Script\Navigation\IDA\IDAstar.cs" />
+    <Compile Include="Assets\Script\Navigation\JPS\JPS.cs" />
     <Compile Include="Assets\Script\Navigation\Manager\Crood_shuffle.cs" />
     <Compile Include="Assets\Script\Navigation\Manager\MapController.cs" />
     <Compile Include="Assets\Script\Navigation\Manager\PlayerControl.cs" />
